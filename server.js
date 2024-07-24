@@ -12,35 +12,33 @@ import {
 import { loginRoute } from "./services/login/index.js"
 import passport from "passport"
 import googleStrategy from "./lib/oauth/googleOauth.js"
+
 const app = express()
 const PORT = process.env.PORT || 3001
 
 app.use(express.json())
+
 passport.use("google", googleStrategy)
+
 app.use("/authors", authorRoute)
 app.use("/blogs", blogRoute)
 app.use("/login", loginRoute)
 
-app.use(badRequestHandler) // 400
-app.use(unauthorizedHandler) // 401
-app.use(notfoundHandler) // 404
-app.use(genericErrorHandler) // 500
+app.use(badRequestHandler)
+app.use(unauthorizedHandler)
+app.use(notfoundHandler)
+app.use(genericErrorHandler)
 
 const initServer = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL)
-    console.log("🌚 The server has successfully connected to mongodb.")
+    console.log("Connected to MongoDB")
     app.listen(PORT, () => {
-      console.log(
-        "🌚 Server has started on port " +
-          PORT +
-          "!" +
-          " \n🌝 The server has these endpoints: \n"
-      )
+      console.log(`Server running on port ${PORT}`)
       console.table(endpoints(app))
     })
   } catch (error) {
-    console.log("❌ CONNECTION FAILED! Error: ", error)
+    console.log("Connection failed: ", error)
   }
 }
 
